@@ -30,6 +30,11 @@ class ModelUser(BaseModel):
     organization: str
 
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
 @app.get("/login")
 def login(username: str, passwd: str):
     record = db.session.query(User).filter_by(name=username).first()
@@ -42,3 +47,5 @@ def login(username: str, passwd: str):
 @app.post("/user/add")
 def add_user(user: ModelUser):
     return {"user": ModelUser}
+
+
