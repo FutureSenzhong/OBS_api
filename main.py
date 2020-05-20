@@ -11,6 +11,7 @@
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 
 from settings.config import Config
 from model.user import User
@@ -29,6 +30,9 @@ app.include_router(app_manage.router, prefix="/api/obs",)
 app.include_router(content_manage.router, prefix="/api/obs",)
 app.include_router(device_manage.router, prefix="/api/obs",)
 app.include_router(organization_manage.router, prefix="/api/obs",)
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 class ModelUser(BaseModel):
