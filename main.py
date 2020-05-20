@@ -19,20 +19,22 @@ from model.database import Database
 from applications import account_manage, app_manage, content_manage, device_manage, organization_manage
 
 
-app = FastAPI()
+def create_app():
+    app = FastAPI()
 
-conf = Config()
-conf.parse("settings/config.ini")
-db = Database(conf.mysqldb)
+    conf = Config()
+    conf.parse("settings/config.ini")
+    db = Database(conf.mysqldb)
 
-app.include_router(account_manage.router, prefix="/api/obs",)
-app.include_router(app_manage.router, prefix="/api/obs",)
-app.include_router(content_manage.router, prefix="/api/obs",)
-app.include_router(device_manage.router, prefix="/api/obs",)
-app.include_router(organization_manage.router, prefix="/api/obs",)
+    app.include_router(account_manage.router, prefix="/api/obs",)
+    app.include_router(app_manage.router, prefix="/api/obs",)
+    app.include_router(content_manage.router, prefix="/api/obs",)
+    app.include_router(device_manage.router, prefix="/api/obs",)
+    app.include_router(organization_manage.router, prefix="/api/obs",)
 
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+    return app, db
 
 
 class ModelUser(BaseModel):
@@ -41,6 +43,9 @@ class ModelUser(BaseModel):
     email: str
     usertype: str
     organization: str
+
+
+app, db = create_app()
 
 
 @app.get("/")
@@ -63,4 +68,4 @@ def add_user(user: ModelUser):
 
 
 if __name__ == '__main__':
-    uvicorn.run(app=app, host="127.0.0.1",port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)
